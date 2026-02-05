@@ -17,6 +17,7 @@ GAMMU_RC_PATH = os.path.join(BASE_DIR, "gammurc")
 LOG_PATH = os.path.join(BASE_DIR, "sms_cli.log")
 HISTORY_PATH = os.path.join(BASE_DIR, "sms_history.jsonl")
 HISTORY_RETENTION_DAYS = 7
+VERSION = "linux-mint-artemis1"
 
 DEFAULT_CONFIG = {
     "country_prefix": "55",
@@ -662,6 +663,36 @@ def view_log(stdscr):
         elif key in (curses.KEY_DOWN, ord("j")):
             index = min(index + 1, max(len(lines) - 1, 0))
 
+def help_screen(stdscr):
+    lines = [
+        f"Europa CLI - Sender SMS (versao {VERSION})",
+        "",
+        "Fluxo basico:",
+        "1) Selecionar modems (use os que ficam OK)",
+        "2) Compor e enviar (digitar/colar ou CSV)",
+        "",
+        "Configuracoes:",
+        "- Flash SMS: envia como flash se habilitado",
+        "- Connection: use 'at' (recomendado)",
+        "- Validar modems: usa gammu identify (mais lento)",
+        "- Mostrar numero do chip: consulta numero (pode travar em portas ruins)",
+        "",
+        "Dicas:",
+        "- Se travar, desative Validar modems e Mostrar numero do chip",
+        "- Prefira /dev/serial/by-id quando disponivel",
+        "",
+        "Historico (7 dias):",
+        f"- Arquivo: {HISTORY_PATH}",
+        "- Campos: nome, telefone, mensagem, flash, status, device, ts",
+        "",
+        "API (historico):",
+        "- Iniciar: python3 sms_api.py --host 0.0.0.0 --port 8081",
+        "- GET /history",
+        "- GET /history?since=YYYY-MM-DDTHH:MM:SS&limit=100",
+        "- GET /health",
+    ]
+    message_screen(stdscr, "Ajuda", lines, wait=True)
+
 def release_ports(selected_devices):
     if not selected_devices:
         return []
@@ -879,10 +910,12 @@ def main(stdscr):
             "Liberar portas (kill)",
             "Configuracoes",
             "Ver log",
+            "Ajuda",
             "Sair",
         ]
-        choice = menu(stdscr, "Europa CLI - Sender SMS", options)
-        if choice is None or choice == 5:
+        title = f"Europa CLI - Sender SMS ({VERSION})"
+        choice = menu(stdscr, title, options)
+        if choice is None or choice == 6:
             break
         if choice == 0:
             selected_cfg = cfg.get("selected_devices", [])
@@ -921,6 +954,8 @@ def main(stdscr):
             settings_menu(stdscr, cfg)
         elif choice == 4:
             view_log(stdscr)
+        elif choice == 5:
+            help_screen(stdscr)
 
 
 if __name__ == "__main__":

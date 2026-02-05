@@ -13,6 +13,9 @@ cd /home/andrefelipe/projetos/sms-cli
 python3 sms_cli.py
 ```
 
+## Versao
+- linux-mint-artemis1
+
 ## Teclas
 - Setas: navegar
 - Enter: selecionar
@@ -44,6 +47,15 @@ python3 sms_api.py --host 0.0.0.0 --port 8081
 - GET `/history` -> lista registros
 - Parametros opcionais: `since=YYYY-MM-DDTHH:MM:SS` e `limit=100`
 - GET `/health` -> ok
+
+## Instalador (Linux Mint/Ubuntu)
+```bash
+./install_linux.sh
+```
+Opcional (para evitar conflito com Gammu):
+```bash
+./install_linux.sh --disable-modemmanager
+```
 
 ## Observacoes
 - Numeros sao deduplicados (nao envia o mesmo numero em outro chip)
