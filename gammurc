@@ -1,0 +1,11 @@
+[ttyUSB0]
+device = /dev/ttyUSB0
+connection = at115200
+
+[ttyUSB2]
+device = /dev/ttyUSB2
+connection = at115200
+
+[ttyUSB3]
+device = /dev/ttyUSB3
+connection = at115200
