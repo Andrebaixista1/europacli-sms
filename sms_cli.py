@@ -7,6 +7,7 @@ import re
 import subprocess
 import time
 from datetime import datetime
+from datetime import timedelta
 from glob import glob
 import csv
 
@@ -14,6 +15,8 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CONFIG_PATH = os.path.join(BASE_DIR, "config.json")
 GAMMU_RC_PATH = os.path.join(BASE_DIR, "gammurc")
 LOG_PATH = os.path.join(BASE_DIR, "sms_cli.log")
+HISTORY_PATH = os.path.join(BASE_DIR, "sms_history.jsonl")
+HISTORY_RETENTION_DAYS = 7
 
 DEFAULT_CONFIG = {
     "country_prefix": "55",
@@ -22,6 +25,7 @@ DEFAULT_CONFIG = {
     "selected_devices": [],
     "send_delay_sec": 1.0,
     "validate_modems": True,
+    "read_numbers": False,
     "last_csv_path": "",
 }
 
@@ -45,31 +49,38 @@ def save_config(cfg):
     with open(CONFIG_PATH, "w", encoding="utf-8") as f:
         json.dump(cfg, f, indent=2, ensure_ascii=False)
 
+def device_real(dev):
+    try:
+        return os.path.realpath(dev)
+    except Exception:
+        return dev
+
 
 def scan_devices():
     patterns = [
+        "/dev/serial/by-id/*",
         "/dev/ttyUSB*",
     ]
-    devices = []
+    candidates = []
     for p in patterns:
-        devices.extend(glob(p))
-    return sorted(set(devices))
-
-
-def section_name_for_device(dev):
-    base = os.path.basename(dev)
-    name = re.sub(r"[^A-Za-z0-9_]+", "_", base)
-    if not name:
-        name = "device"
-    return name
+        candidates.extend(sorted(glob(p)))
+    devices = []
+    seen_real = set()
+    for dev in candidates:
+        real = device_real(dev)
+        if real in seen_real:
+            continue
+        seen_real.add(real)
+        devices.append(dev)
+    return devices
 
 
 def write_gammu_config(devices, connection):
     lines = []
-    for dev in devices:
-        section = section_name_for_device(dev)
+    for i, dev in enumerate(devices, start=1):
+        section = f"gammu{i}"
         lines.append(f"[{section}]")
-        lines.append(f"device = {dev}")
+        lines.append(f"port = {dev}")
         lines.append(f"connection = {connection}")
         lines.append("")
     with open(GAMMU_RC_PATH, "w", encoding="utf-8") as f:
@@ -77,17 +88,74 @@ def write_gammu_config(devices, connection):
 
 
 def write_temp_gammu_config(dev, connection):
-    section = section_name_for_device(dev)
+    section = "gammu1"
     lines = [
         f"[{section}]",
-        f"device = {dev}",
+        f"port = {dev}",
         f"connection = {connection}",
         "",
     ]
     path = os.path.join(BASE_DIR, "gammurc_check")
     with open(path, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
-    return path, section
+    return path, "1"
+
+
+def parse_ts(value):
+    if not value:
+        return None
+    try:
+        return datetime.fromisoformat(value)
+    except Exception:
+        return None
+
+
+def load_history():
+    records = []
+    if not os.path.exists(HISTORY_PATH):
+        return records
+    try:
+        with open(HISTORY_PATH, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    rec = json.loads(line)
+                except Exception:
+                    continue
+                records.append(rec)
+    except Exception:
+        return []
+    return records
+
+
+def prune_history(records=None, max_days=HISTORY_RETENTION_DAYS):
+    if records is None:
+        records = load_history()
+    cutoff = datetime.now() - timedelta(days=max_days)
+    kept = []
+    for rec in records:
+        ts = parse_ts(rec.get("ts"))
+        if ts and ts >= cutoff:
+            kept.append(rec)
+    tmp = HISTORY_PATH + ".tmp"
+    try:
+        with open(tmp, "w", encoding="utf-8") as f:
+            for rec in kept:
+                f.write(json.dumps(rec, ensure_ascii=False) + "\n")
+        os.replace(tmp, HISTORY_PATH)
+    except Exception:
+        return kept
+    return kept
+
+
+def append_history(record):
+    try:
+        with open(HISTORY_PATH, "a", encoding="utf-8") as f:
+            f.write(json.dumps(record, ensure_ascii=False) + "\n")
+    except Exception:
+        return
 
 
 def is_valid_modem(dev, connection):
@@ -121,13 +189,21 @@ def get_own_number(dev, connection):
         return None
 
 
-def scan_devices_with_status(connection, validate=True):
+def scan_devices_with_status(connection, validate=True, read_numbers=False):
     devices = scan_devices()
     status = {}
     numbers = {}
     for dev in devices:
-        status[dev] = "?" if not validate else ("OK" if is_valid_modem(dev, connection) else "FAIL")
-        numbers[dev] = get_own_number(dev, connection) or "-"
+        if not validate:
+            status[dev] = "?"
+            numbers[dev] = "-"
+            continue
+        ok = is_valid_modem(dev, connection)
+        status[dev] = "OK" if ok else "FAIL"
+        if read_numbers and ok:
+            numbers[dev] = get_own_number(dev, connection) or "-"
+        else:
+            numbers[dev] = "-"
     return devices, status, numbers
 
 
@@ -162,7 +238,7 @@ def parse_numbers(text, prefix):
         if not num or num in seen:
             continue
         seen.add(num)
-        numbers.append(num)
+        numbers.append({"number": num, "name": ""})
     return numbers
 
 
@@ -187,12 +263,22 @@ def parse_csv_numbers(path, prefix):
                     or row.get("Numero")
                     or row.get("NUMERO")
                 )
+                name = (
+                    row.get("nome")
+                    or row.get("Nome")
+                    or row.get("NOME")
+                )
                 if not num:
                     continue
                 formatted = format_number(str(num), prefix)
                 if formatted and formatted not in seen:
                     seen.add(formatted)
-                    numbers.append(formatted)
+                    numbers.append(
+                        {
+                            "number": formatted,
+                            "name": str(name).strip() if name is not None else "",
+                        }
+                    )
     except Exception:
         return []
     return numbers
@@ -220,20 +306,50 @@ def send_sms(section, number, message, flash):
     return ok, out, err
 
 
-def send_numbers(numbers, sections, message, flash, delay_sec):
+def send_numbers(recipients, sections, devices, message, flash, delay_sec, progress_cb=None):
     ok_count = 0
     failed = []
-    for i, num in enumerate(numbers):
-        section = sections[i % len(sections)]
-        ok, out, err = send_sms(section, num, message, flash)
-        if ok:
-            ok_count += 1
-            log_event(f"OK {num} via {section}")
-        else:
+    total_modems = len(sections)
+    for i, rec in enumerate(recipients):
+        num = rec.get("number", "")
+        name = rec.get("name", "")
+        if progress_cb:
+            progress_cb(i, len(recipients), ok_count, len(failed), num)
+        ok = False
+        start_idx = i % total_modems if total_modems else 0
+        for attempt in range(max(total_modems, 1)):
+            idx = (start_idx + attempt) % total_modems if total_modems else 0
+            section = sections[idx]
+            device = devices[idx]
+            ok_try, out, err = send_sms(section, num, message, flash)
+            if ok_try:
+                ok_count += 1
+                log_event(f"OK {num} via {section}")
+            else:
+                log_event(f"FAIL {num} via {section} | {err or out}")
+            append_history(
+                {
+                    "ts": datetime.now().isoformat(timespec="seconds"),
+                    "name": name,
+                    "number": num,
+                    "message": message,
+                    "flash": bool(flash),
+                    "status": "OK" if ok_try else "FAIL",
+                    "device": device,
+                    "section": section,
+                    "response": out or err,
+                }
+            )
+            if ok_try:
+                ok = True
+                break
+        if not ok:
             failed.append(num)
-            log_event(f"FAIL {num} via {section} | {err or out}")
-        if delay_sec > 0 and i < len(numbers) - 1:
+        if progress_cb:
+            progress_cb(i + 1, len(recipients), ok_count, len(failed), num)
+        if delay_sec > 0 and i < len(recipients) - 1:
             time.sleep(delay_sec)
+    prune_history()
     return ok_count, failed
 
 
@@ -242,6 +358,24 @@ def draw_header(stdscr, title):
     h, w = stdscr.getmaxyx()
     stdscr.addstr(0, 2, title, curses.A_BOLD)
     stdscr.hline(1, 0, "-", w)
+
+
+def draw_progress(stdscr, title, sent, total, ok_count, fail_count, current_num):
+    draw_header(stdscr, title)
+    h, w = stdscr.getmaxyx()
+    if total <= 0:
+        total = 1
+    stdscr.addstr(3, 2, f"Progresso: {sent}/{total}")
+    bar_width = max(10, w - 10)
+    filled = int(bar_width * sent / total)
+    if filled > bar_width:
+        filled = bar_width
+    bar = "[" + ("#" * filled) + ("-" * (bar_width - filled)) + "]"
+    stdscr.addstr(4, 2, bar[: max(w - 4, 0)])
+    stdscr.addstr(6, 2, f"OK: {ok_count}  FAIL: {fail_count}")
+    if current_num:
+        stdscr.addstr(8, 2, f"Atual: {current_num}")
+    stdscr.refresh()
 
 
 def menu(stdscr, title, options, index=0):
@@ -541,7 +675,9 @@ def release_ports(selected_devices):
     return results
 
 def release_ports_screen(stdscr, cfg, devices):
-    selected = [d for d in devices if d in cfg.get("selected_devices", [])]
+    selected_cfg = cfg.get("selected_devices", [])
+    selected_real = {device_real(d) for d in selected_cfg}
+    selected = [d for d in devices if device_real(d) in selected_real]
     if not selected:
         message_screen(stdscr, "Liberar portas", ["Nenhum modem selecionado."])
         return
@@ -565,7 +701,9 @@ def release_ports_screen(stdscr, cfg, devices):
     message_screen(stdscr, "Liberar portas", msg)
 
 def compose_and_send(stdscr, cfg, devices):
-    selected = [d for d in devices if d in cfg.get("selected_devices", [])]
+    selected_cfg = cfg.get("selected_devices", [])
+    selected_real = {device_real(d) for d in selected_cfg}
+    selected = [d for d in devices if device_real(d) in selected_real]
     if not selected:
         message_screen(stdscr, "Enviar", ["Nenhum modem selecionado."])
         return
@@ -580,7 +718,7 @@ def compose_and_send(stdscr, cfg, devices):
         )
         if numbers_text is None:
             return
-        numbers = parse_numbers(numbers_text, cfg.get("country_prefix", ""))
+        recipients = parse_numbers(numbers_text, cfg.get("country_prefix", ""))
     else:
         path = choose_file_dialog()
         if not path:
@@ -592,11 +730,11 @@ def compose_and_send(stdscr, cfg, devices):
             )
         if not path:
             return
-        numbers = parse_csv_numbers(path, cfg.get("country_prefix", ""))
-        if numbers:
+        recipients = parse_csv_numbers(path, cfg.get("country_prefix", ""))
+        if recipients:
             cfg["last_csv_path"] = path
             save_config(cfg)
-        message_screen(stdscr, "CSV", [f"Numeros carregados: {len(numbers)}"])
+        message_screen(stdscr, "CSV", [f"Numeros carregados: {len(recipients)}"])
     message = multiline_input(
         stdscr,
         "Mensagem",
@@ -604,16 +742,16 @@ def compose_and_send(stdscr, cfg, devices):
     )
     if message is None:
         return
-    if not numbers:
+    if not recipients:
         message_screen(stdscr, "Enviar", ["Nenhum numero valido informado."])
         return
 
     write_gammu_config(selected, cfg.get("connection", "at"))
-    sections = [section_name_for_device(d) for d in selected]
+    sections = [str(i + 1) for i in range(len(selected))]
 
     lines = [
         f"Modems selecionados: {len(selected)}",
-        f"Numeros unicos: {len(numbers)}",
+        f"Numeros unicos: {len(recipients)}",
         f"Flash: {'sim' if cfg.get('flash') else 'nao'}",
         "",
         "Confirma o envio?",
@@ -623,11 +761,29 @@ def compose_and_send(stdscr, cfg, devices):
 
     delay = float(cfg.get("send_delay_sec", 0))
     attempt = 1
-    pending = numbers
+    pending = recipients
     total_ok = 0
     while True:
+        def progress_cb(sent, total, ok_count, fail_count, current_num):
+            title = "Enviando" if attempt == 1 else f"Enviando (tentativa {attempt})"
+            draw_progress(
+                stdscr,
+                title,
+                sent,
+                total,
+                ok_count,
+                fail_count,
+                current_num,
+            )
+
         ok_count, failed = send_numbers(
-            pending, sections, message, cfg.get("flash", False), delay
+            pending,
+            sections,
+            selected,
+            message,
+            cfg.get("flash", False),
+            delay,
+            progress_cb=progress_cb,
         )
         total_ok += ok_count
         fail_count = len(failed)
@@ -646,7 +802,7 @@ def compose_and_send(stdscr, cfg, devices):
         )
         if not retry:
             break
-        pending = failed
+        pending = [{"number": n, "name": ""} for n in failed]
         attempt += 1
 
 
@@ -658,10 +814,11 @@ def settings_menu(stdscr, cfg):
             f"Connection (atual: {cfg.get('connection')})",
             f"Delay entre envios (seg, atual: {cfg.get('send_delay_sec')})",
             f"Validar modems (atual: {'sim' if cfg.get('validate_modems') else 'nao'})",
+            f"Mostrar numero do chip (atual: {'sim' if cfg.get('read_numbers') else 'nao'})",
             "Voltar",
         ]
         choice = menu(stdscr, "Config", options)
-        if choice is None or choice == 5:
+        if choice is None or choice == 6:
             return
         if choice == 0:
             cfg["flash"] = not cfg.get("flash", False)
@@ -700,6 +857,9 @@ def settings_menu(stdscr, cfg):
         elif choice == 4:
             cfg["validate_modems"] = not cfg.get("validate_modems", True)
             save_config(cfg)
+        elif choice == 5:
+            cfg["read_numbers"] = not cfg.get("read_numbers", False)
+            save_config(cfg)
 
 
 def main(stdscr):
@@ -709,7 +869,9 @@ def main(stdscr):
 
     while True:
         devices, status_map, number_map = scan_devices_with_status(
-            cfg.get("connection", "at"), cfg.get("validate_modems", True)
+            cfg.get("connection", "at"),
+            cfg.get("validate_modems", True),
+            cfg.get("read_numbers", False),
         )
         options = [
             "Selecionar modems",
@@ -723,11 +885,15 @@ def main(stdscr):
         if choice is None or choice == 5:
             break
         if choice == 0:
-            checked = set(cfg.get("selected_devices", []))
+            selected_cfg = cfg.get("selected_devices", [])
+            selected_real = {device_real(d) for d in selected_cfg}
+            checked = {d for d in devices if device_real(d) in selected_real}
             while True:
                 def do_rescan():
                     return scan_devices_with_status(
-                        cfg.get("connection", "at"), cfg.get("validate_modems", True)
+                        cfg.get("connection", "at"),
+                        cfg.get("validate_modems", True),
+                        cfg.get("read_numbers", False),
                     )
 
                 result = checkbox_list(

@@ -33,6 +33,18 @@ python3 sms_cli.py
 ## Log
 - `sms_cli.log`
 
+## Historico de SMS (7 dias)
+- Historico em `sms_history.jsonl` (nome, telefone, mensagem, flash, status, modem).
+- Registros com mais de 7 dias sao descartados automaticamente.
+
+## API de historico
+```bash
+python3 sms_api.py --host 0.0.0.0 --port 8081
+```
+- GET `/history` -> lista registros
+- Parametros opcionais: `since=YYYY-MM-DDTHH:MM:SS` e `limit=100`
+- GET `/health` -> ok
+
 ## Observacoes
 - Numeros sao deduplicados (nao envia o mesmo numero em outro chip)
 - Envio balanceado entre os modems selecionados (round-robin)
