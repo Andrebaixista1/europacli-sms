@@ -20,6 +20,7 @@ python3 sms_cli.py
 - R: rescan de modems
 - F2: finalizar entrada de texto
 - ESC: cancelar entrada
+- Rescan automatico a cada 30s na tela de modems
 - R: reenviar falhas (aparece apos envio com erro)
 
 ## Configuracoes

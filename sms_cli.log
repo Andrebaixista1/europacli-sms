@@ -1,2 +1,8 @@
 [2026-02-05 11:55:16] FAIL +5511984976965 via ttyUSB0 | Error: Parameter is not a number: ttyUSB0
 [2026-02-05 11:55:39] FAIL +5511984976965 via ttyUSB0 | Error: Parameter is not a number: ttyUSB0
+[2026-02-05 12:07:30] KILL FAIL /dev/ttyUSB0 | 
+[2026-02-05 12:07:30] KILL FAIL /dev/ttyUSB2 | 
+[2026-02-05 12:07:30] KILL FAIL /dev/ttyUSB3 | 
+[2026-02-05 12:07:36] KILL FAIL /dev/ttyUSB0 | 
+[2026-02-05 12:07:36] KILL FAIL /dev/ttyUSB2 | 
+[2026-02-05 12:07:36] KILL FAIL /dev/ttyUSB3 | 

@@ -4,8 +4,7 @@
   "connection": "at115200",
   "selected_devices": [
     "/dev/ttyUSB0",
-    "/dev/ttyUSB2",
-    "/dev/ttyUSB3"
+    "/dev/ttyUSB2"
   ],
   "send_delay_sec": 1.0,
   "validate_modems": true,

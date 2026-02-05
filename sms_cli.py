@@ -270,10 +270,22 @@ def menu(stdscr, title, options, index=0):
             return index
 
 
-def checkbox_list(stdscr, title, items, checked, status=None, numbers=None):
+def checkbox_list(
+    stdscr,
+    title,
+    items,
+    checked,
+    status=None,
+    numbers=None,
+    rescan_fn=None,
+    rescan_interval_sec=0,
+):
     curses.curs_set(0)
     index = 0
     notice = ""
+    last_scan = time.time()
+    if rescan_fn and rescan_interval_sec > 0:
+        stdscr.timeout(500)
     while True:
         draw_header(stdscr, title)
         h, w = stdscr.getmaxyx()
@@ -299,14 +311,40 @@ def checkbox_list(stdscr, title, items, checked, status=None, numbers=None):
                 stdscr.addstr(y, 4, line)
         if notice:
             stdscr.addstr(h - 3, 2, notice[: w - 4])
-        stdscr.addstr(h - 2, 2, "Espaco: marcar  R: rescan  S: salvar  Q: voltar")
+        if rescan_fn and rescan_interval_sec > 0:
+            now = time.time()
+            remaining = int(max(0, rescan_interval_sec - (now - last_scan)))
+            stdscr.addstr(
+                h - 2,
+                2,
+                f"Espaco: marcar  R: rescan  Auto: {rescan_interval_sec}s (em {remaining}s)  S: salvar  Q: voltar",
+            )
+        else:
+            stdscr.addstr(h - 2, 2, "Espaco: marcar  R: rescan  S: salvar  Q: voltar")
         stdscr.refresh()
         key = stdscr.getch()
+        if key == -1:
+            if rescan_fn and rescan_interval_sec > 0:
+                now = time.time()
+                if now - last_scan >= rescan_interval_sec:
+                    items, status, numbers = rescan_fn()
+                    checked.intersection_update(set(items))
+                    last_scan = now
+            continue
         if key in (ord("q"), ord("Q")):
+            if rescan_fn and rescan_interval_sec > 0:
+                stdscr.timeout(-1)
             return checked
         if key in (ord("s"), ord("S")):
+            if rescan_fn and rescan_interval_sec > 0:
+                stdscr.timeout(-1)
             return checked
         if key in (ord("r"), ord("R")):
+            if rescan_fn:
+                items, status, numbers = rescan_fn()
+                checked.intersection_update(set(items))
+                last_scan = time.time()
+                continue
             return "__RESCAN__"
         if key in (curses.KEY_UP, ord("k")):
             index = (index - 1) % max(len(items), 1)
@@ -687,11 +725,23 @@ def main(stdscr):
         if choice == 0:
             checked = set(cfg.get("selected_devices", []))
             while True:
-                result = checkbox_list(stdscr, "Modems", devices, checked, status_map, number_map)
-                if result == "__RESCAN__":
-                    devices, status_map, number_map = scan_devices_with_status(
+                def do_rescan():
+                    return scan_devices_with_status(
                         cfg.get("connection", "at"), cfg.get("validate_modems", True)
                     )
+
+                result = checkbox_list(
+                    stdscr,
+                    "Modems",
+                    devices,
+                    checked,
+                    status_map,
+                    number_map,
+                    rescan_fn=do_rescan,
+                    rescan_interval_sec=30,
+                )
+                if result == "__RESCAN__":
+                    devices, status_map, number_map = do_rescan()
                     continue
                 checked = result
                 break
