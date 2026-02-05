@@ -57,6 +57,19 @@ Opcional (para evitar conflito com Gammu):
 ./install_linux.sh --disable-modemmanager
 ```
 
+## Windows
+- Instale o Gammu para Windows e garanta `gammu.exe` no PATH.
+- Instale dependencias Python: `windows-curses` e `pyserial`.
+
+Instalador:
+```powershell
+./install_windows.ps1
+```
+Opcional (tentar instalar Gammu via winget):
+```powershell
+./install_windows.ps1 -InstallGammu
+```
+
 ## Observacoes
 - Numeros sao deduplicados (nao envia o mesmo numero em outro chip)
 - Envio balanceado entre os modems selecionados (round-robin)

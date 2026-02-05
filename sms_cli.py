@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-import curses
+try:
+    import curses
+except Exception:
+    print("Erro: curses nao disponivel. No Windows, instale: pip install windows-curses")
+    raise SystemExit(1)
 import json
 import locale
 import os
@@ -18,6 +22,7 @@ LOG_PATH = os.path.join(BASE_DIR, "sms_cli.log")
 HISTORY_PATH = os.path.join(BASE_DIR, "sms_history.jsonl")
 HISTORY_RETENTION_DAYS = 7
 VERSION = "linux-mint-artemis1"
+IS_WINDOWS = os.name == "nt"
 
 DEFAULT_CONFIG = {
     "country_prefix": "55",
@@ -56,11 +61,25 @@ def device_real(dev):
     except Exception:
         return dev
 
+def list_windows_ports():
+    try:
+        from serial.tools import list_ports
+    except Exception:
+        return []
+    ports = []
+    for p in list_ports.comports():
+        if p.device:
+            ports.append(p.device)
+    return sorted(ports)
+
 
 def scan_devices():
+    if IS_WINDOWS:
+        return list_windows_ports()
     patterns = [
         "/dev/serial/by-id/*",
         "/dev/ttyUSB*",
+        "/dev/ttyACM*",
     ]
     candidates = []
     for p in patterns:
@@ -680,6 +699,7 @@ def help_screen(stdscr):
         "Dicas:",
         "- Se travar, desative Validar modems e Mostrar numero do chip",
         "- Prefira /dev/serial/by-id quando disponivel",
+        "- No Windows, use portas COM (ex: COM3)",
         "",
         "Historico (7 dias):",
         f"- Arquivo: {HISTORY_PATH}",
@@ -694,6 +714,8 @@ def help_screen(stdscr):
     message_screen(stdscr, "Ajuda", lines, wait=True)
 
 def release_ports(selected_devices):
+    if IS_WINDOWS:
+        return []
     if not selected_devices:
         return []
     results = []
@@ -706,6 +728,9 @@ def release_ports(selected_devices):
     return results
 
 def release_ports_screen(stdscr, cfg, devices):
+    if IS_WINDOWS:
+        message_screen(stdscr, "Liberar portas", ["Disponivel apenas no Linux."])
+        return
     selected_cfg = cfg.get("selected_devices", [])
     selected_real = {device_real(d) for d in selected_cfg}
     selected = [d for d in devices if device_real(d) in selected_real]
