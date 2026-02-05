@@ -6,3 +6,18 @@
 [2026-02-05 12:07:36] KILL FAIL /dev/ttyUSB0 | 
 [2026-02-05 12:07:36] KILL FAIL /dev/ttyUSB2 | 
 [2026-02-05 12:07:36] KILL FAIL /dev/ttyUSB3 | 
+[2026-02-05 12:25:28] FAIL +5511984976965 via ttyUSB0 | Error: Parameter is not a number: ttyUSB0
+[2026-02-05 12:25:31] FAIL +5511984976965 via ttyUSB0 | Error: Parameter is not a number: ttyUSB0
+[2026-02-05 12:25:32] FAIL +5511984976965 via ttyUSB0 | Error: Parameter is not a number: ttyUSB0
+[2026-02-05 12:25:32] FAIL +5511984976965 via ttyUSB0 | Error: Parameter is not a number: ttyUSB0
+[2026-02-05 12:25:33] FAIL +5511984976965 via ttyUSB0 | Error: Parameter is not a number: ttyUSB0
+[2026-02-05 12:25:33] FAIL +5511984976965 via ttyUSB0 | Error: Parameter is not a number: ttyUSB0
+[2026-02-05 12:25:34] FAIL +5511984976965 via ttyUSB0 | Error: Parameter is not a number: ttyUSB0
+[2026-02-05 12:25:35] FAIL +5511984976965 via ttyUSB0 | Error: Parameter is not a number: ttyUSB0
+[2026-02-05 12:25:37] FAIL +5511984976965 via ttyUSB0 | Error: Parameter is not a number: ttyUSB0
+[2026-02-05 12:25:37] FAIL +5511984976965 via ttyUSB0 | Error: Parameter is not a number: ttyUSB0
+[2026-02-05 12:25:37] FAIL +5511984976965 via ttyUSB0 | Error: Parameter is not a number: ttyUSB0
+[2026-02-05 12:26:20] KILL OK /dev/ttyUSB0 | 952
+[2026-02-05 12:26:41] FAIL +5511984976965 via ttyUSB0 | Error: Parameter is not a number: ttyUSB0
+[2026-02-05 12:27:13] FAIL +5511984976965 via ttyUSB1 | Error: Parameter is not a number: ttyUSB1
+[2026-02-05 12:28:06] FAIL +55119849769656 via ttyUSB1 | Error: Parameter is not a number: ttyUSB1

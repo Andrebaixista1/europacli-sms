@@ -1,12 +1,13 @@
 {
   "country_prefix": "55",
-  "flash": true,
+  "flash": false,
   "connection": "at115200",
   "selected_devices": [
-    "/dev/ttyUSB0",
-    "/dev/ttyUSB2"
+    "/dev/ttyUSB1",
+    "/dev/ttyUSB2",
+    "/dev/ttyUSB3"
   ],
   "send_delay_sec": 1.0,
-  "validate_modems": true,
+  "validate_modems": false,
   "last_csv_path": ""
 }
