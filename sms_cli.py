@@ -609,9 +609,11 @@ def send_numbers(
     modem_labels=None,
     report_records=None,
 ):
+    FAIL_LIMIT = 10
     ok_count = 0
     failed = []
     total_modems = len(sections)
+    stop_index = len(recipients)
     for i, rec in enumerate(recipients):
         num = rec.get("number", "")
         name = _normalize_text(rec.get("name", ""))
@@ -698,6 +700,45 @@ def send_numbers(
                     time.sleep(random.uniform(mn, mx))
             elif delay_sec > 0:
                 time.sleep(delay_sec)
+        if len(failed) >= FAIL_LIMIT:
+            stop_index = i + 1
+            break
+
+    # Se parou por limite de falhas, registra o restante como FAIL (skipped)
+    if stop_index < len(recipients):
+        for j in range(stop_index, len(recipients)):
+            rec = recipients[j]
+            num = rec.get("number", "")
+            name = _normalize_text(rec.get("name", ""))
+            if status_list is not None:
+                status_list[j] = "FAIL"
+            if recipient_modems is not None:
+                recipient_modems[j] = "SKIPPED"
+            record = {
+                "ts": datetime.now().isoformat(timespec="seconds"),
+                "name": name,
+                "number": num,
+                "message": message,
+                "flash": bool(flash),
+                "status": "FAIL",
+                "device": "SKIPPED_FAIL_LIMIT",
+                "section": "-",
+                "response": "Skipped: fail limit reached",
+            }
+            append_history(record)
+            if report_records is not None:
+                report_records.append(record)
+            if progress_cb:
+                progress_cb(
+                    j + 1,
+                    len(recipients),
+                    ok_count,
+                    len(failed),
+                    num,
+                    status_list,
+                    j,
+                    "SKIPPED",
+                )
     prune_history()
     return ok_count, failed
 
