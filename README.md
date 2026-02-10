@@ -31,7 +31,12 @@ python3 sms_cli.py
 - Flash SMS (toggle)
 - Connection do Gammu (padrao: at)
 - Delay entre envios (segundos)
+- Delay aleatorio entre envios (padrao: sim, 10-30s)
 - Validacao de modems (usa `gammu identify`)
+- Comandos AT (opcional) para ativar modems (ex: `AT+ZCDRUN=8`)
+- Baud AT (padrao: 115200)
+- Auto ativar AT ao iniciar (padrao: sim)
+- Keepalive AT (padrao: sim, comandos: `AT`, intervalo: 60s)
 
 ## Log
 - `sms_cli.log`
@@ -39,6 +44,11 @@ python3 sms_cli.py
 ## Historico de SMS (7 dias)
 - Historico em `sms_history.jsonl` (nome, telefone, mensagem, flash, status, modem).
 - Registros com mais de 7 dias sao descartados automaticamente.
+- No menu, `Historico` mostra os registros. Pressione `F6` para exportar CSV.
+
+## Relatorio
+- Menu `Relatorio` mostra quantidade de disparos por modem.
+- Pressione `F6` para exportar CSV (separado por `;`, UTF-8).
 
 ## API de historico
 ```bash
@@ -73,9 +83,12 @@ Opcional (tentar instalar Gammu via winget):
 ## Observacoes
 - Numeros sao deduplicados (nao envia o mesmo numero em outro chip)
 - Envio balanceado entre os modems selecionados (round-robin)
-- Importacao CSV com colunas `nome` e `numero` (seletor via zenity/kdialog, com fallback para caminho manual)
+- Importacao CSV: coluna 1=telefone, coluna 2=nome (independente de cabecalho)
 - Opcao \"Liberar portas\" mata processos usando as portas selecionadas
+- Opcao \"Ativar modems (AT)\" envia comandos AT configurados para os modems selecionados
+- Opcao \"Reenviar do historico\" permite selecionar numeros anteriores para novo envio
 - Menu de modems mostra status `OK`/`FAIL`
 - Salva o ultimo CSV usado para reusar rapido
 - Menu de modems mostra o numero do chip quando disponivel
+- Mensagem aceita variavel `<NAME>` (case-insensitive) para substituir pelo nome do CSV
 # europacli-sms

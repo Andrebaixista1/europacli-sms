@@ -21,3 +21,245 @@
 [2026-02-05 12:26:41] FAIL +5511984976965 via ttyUSB0 | Error: Parameter is not a number: ttyUSB0
 [2026-02-05 12:27:13] FAIL +5511984976965 via ttyUSB1 | Error: Parameter is not a number: ttyUSB1
 [2026-02-05 12:28:06] FAIL +55119849769656 via ttyUSB1 | Error: Parameter is not a number: ttyUSB1
+[2026-02-05 12:54:52] FAIL +5511984976965 via ttyUSB1 | Error: Parameter is not a number: ttyUSB1
+[2026-02-05 13:01:24] OK +5511984976965 via 1
+[2026-02-05 13:06:30] FAIL +5511984976965 via 1 | Se deseja interromper, pressione CTRL+C…
+[2026-02-05 13:15:03] FAIL +5511984976965 via 1 | Se deseja interromper, pressione CTRL+C…
+[2026-02-05 13:15:40] FAIL +5511984976965 via 1 | Se deseja interromper, pressione CTRL+C…
+[2026-02-05 13:18:32] FAIL +5511984976965 via 1 | Se deseja interromper, pressione CTRL+C…
+[2026-02-05 13:19:02] FAIL +5511984976965 via 2 | Não houve resposta no tempo especificado. Provavelmente o telefone esteja desconectado.
+[2026-02-05 13:19:32] FAIL +5511984976965 via 3 | Se deseja interromper, pressione CTRL+C…
+[2026-02-05 13:19:49] FAIL +5511984976965 via 4 | Se deseja interromper, pressione CTRL+C…
+[2026-02-05 13:20:10] OK +5511984976965 via 5
+[2026-02-10 10:16:04] FAIL +5511980733602 via 1 | Se deseja interromper, pressione CTRL+C…
+[2026-02-10 10:16:04] FAIL +5511980733602 via 2 | Erro abrindo dispositivo. Desconhecido, ocupado ou sem permissões.
+[2026-02-10 10:16:25] FAIL +5511980733602 via 3 | Erro ao gravar no dispositivo.
+[2026-02-10 10:16:42] FAIL +5511916910227 via 2 | Se deseja interromper, pressione CTRL+C…
+[2026-02-10 10:17:03] FAIL +5511916910227 via 3 | Erro ao gravar no dispositivo.
+[2026-02-10 10:17:18] FAIL +5511916910227 via 1 | Se deseja interromper, pressione CTRL+C…
+[2026-02-10 10:30:26] KILL FAIL /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if02-port0 | 
+[2026-02-10 10:30:26] KILL FAIL /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if03-port0 | 
+[2026-02-10 10:30:26] KILL FAIL /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if04-port0 | 
+[2026-02-10 11:06:03] AT OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if02-port0 | 
+[2026-02-10 11:06:03] AT OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if03-port0 | 
+[2026-02-10 11:06:04] AT OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if04-port0 | 
+[2026-02-10 11:06:04] AT OK /dev/ttyUSB0 | 
+[2026-02-10 11:06:04] AT OK /dev/ttyUSB1 | 
+[2026-02-10 11:06:04] AT OK /dev/ttyUSB2 | 
+[2026-02-10 11:06:09] AT OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if02-port0 | 
+[2026-02-10 11:06:10] AT OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if03-port0 | 
+[2026-02-10 11:06:10] AT OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if04-port0 | 
+[2026-02-10 11:06:10] AT OK /dev/ttyUSB0 | 
+[2026-02-10 11:06:10] AT OK /dev/ttyUSB1 | 
+[2026-02-10 11:06:10] AT OK /dev/ttyUSB2 | 
+[2026-02-10 11:07:46] OK +5511980733602 via 1
+[2026-02-10 11:07:54] OK +5511916910227 via 2
+[2026-02-10 11:19:30] AT OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if02-port0 | 
+[2026-02-10 11:19:30] AT OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if03-port0 | 
+[2026-02-10 11:19:31] AT OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if04-port0 | 
+[2026-02-10 11:19:31] KEEPALIVE OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if02-port0 | 
+[2026-02-10 11:19:31] KEEPALIVE OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if03-port0 | 
+[2026-02-10 11:19:31] KEEPALIVE OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if04-port0 | 
+[2026-02-10 11:19:36] AT OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if02-port0 | 
+[2026-02-10 11:19:36] AT OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if03-port0 | 
+[2026-02-10 11:19:36] AT OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if04-port0 | 
+[2026-02-10 11:21:31] AT OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if02-port0 | 
+[2026-02-10 11:21:32] AT OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if03-port0 | 
+[2026-02-10 11:21:32] AT OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if04-port0 | 
+[2026-02-10 11:21:53] AT OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if02-port0 | 
+[2026-02-10 11:21:53] AT OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if03-port0 | 
+[2026-02-10 11:21:54] AT OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if04-port0 | 
+[2026-02-10 11:22:30] AT OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if02-port0 | 
+[2026-02-10 11:22:31] AT OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if03-port0 | 
+[2026-02-10 11:22:31] AT OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if04-port0 | 
+[2026-02-10 11:22:31] AT OK /dev/ttyUSB0 | 
+[2026-02-10 11:22:31] AT OK /dev/ttyUSB1 | 
+[2026-02-10 11:22:31] AT OK /dev/ttyUSB2 | 
+[2026-02-10 11:22:32] KEEPALIVE OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if02-port0 | 
+[2026-02-10 11:22:32] KEEPALIVE OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if03-port0 | 
+[2026-02-10 11:22:32] KEEPALIVE OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if04-port0 | 
+[2026-02-10 11:22:32] KEEPALIVE OK /dev/ttyUSB0 | 
+[2026-02-10 11:22:32] KEEPALIVE OK /dev/ttyUSB1 | 
+[2026-02-10 11:22:33] KEEPALIVE OK /dev/ttyUSB2 | 
+[2026-02-10 11:25:29] AT OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if02-port0 | 
+[2026-02-10 11:25:29] AT OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if03-port0 | 
+[2026-02-10 11:25:29] AT OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if04-port0 | 
+[2026-02-10 11:26:34] KEEPALIVE OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if02-port0 | 
+[2026-02-10 11:26:34] KEEPALIVE OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if03-port0 | 
+[2026-02-10 11:26:34] KEEPALIVE OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if04-port0 | 
+[2026-02-10 11:26:35] KEEPALIVE OK /dev/ttyUSB0 | 
+[2026-02-10 11:26:35] KEEPALIVE OK /dev/ttyUSB1 | 
+[2026-02-10 11:26:35] KEEPALIVE OK /dev/ttyUSB2 | 
+[2026-02-10 11:27:19] AT OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if02-port0 | 
+[2026-02-10 11:27:20] AT OK /dev/ttyUSB0 | 
+[2026-02-10 11:27:20] AT OK /dev/ttyUSB1 | 
+[2026-02-10 11:27:20] AT OK /dev/ttyUSB2 | 
+[2026-02-10 11:27:20] AT OK /dev/ttyUSB4 | 
+[2026-02-10 11:27:20] AT OK /dev/ttyUSB5 | 
+[2026-02-10 11:27:21] KEEPALIVE OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if02-port0 | 
+[2026-02-10 11:27:21] KEEPALIVE OK /dev/ttyUSB0 | 
+[2026-02-10 11:27:21] KEEPALIVE OK /dev/ttyUSB1 | 
+[2026-02-10 11:27:21] KEEPALIVE OK /dev/ttyUSB2 | 
+[2026-02-10 11:27:21] KEEPALIVE OK /dev/ttyUSB4 | 
+[2026-02-10 11:27:22] KEEPALIVE OK /dev/ttyUSB5 | 
+[2026-02-10 11:27:58] AT OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if02-port0 | 
+[2026-02-10 11:27:58] AT OK /dev/ttyUSB1 | 
+[2026-02-10 11:27:59] AT OK /dev/ttyUSB2 | 
+[2026-02-10 11:29:26] OK +5511980733602 via 1
+[2026-02-10 11:29:49] FAIL +5511916910227 via 2 | Não houve resposta no tempo especificado. Provavelmente o telefone esteja desconectado.
+[2026-02-10 11:30:19] FAIL +5511916910227 via 3 | Não houve resposta no tempo especificado. Provavelmente o telefone esteja desconectado.
+[2026-02-10 11:30:26] OK +5511916910227 via 1
+[2026-02-10 11:30:58] FAIL +5511984976965 via 3 | Não houve resposta no tempo especificado. Provavelmente o telefone esteja desconectado.
+[2026-02-10 11:31:05] OK +5511984976965 via 1
+[2026-02-10 11:31:13] OK +5511983594996 via 1
+[2026-02-10 11:35:33] KEEPALIVE OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if02-port0 | 
+[2026-02-10 11:35:33] KEEPALIVE OK /dev/ttyUSB1 | 
+[2026-02-10 11:35:33] KEEPALIVE OK /dev/ttyUSB2 | 
+[2026-02-10 11:35:38] AT OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if02-port0 | 
+[2026-02-10 11:35:38] AT OK /dev/ttyUSB1 | 
+[2026-02-10 11:35:38] AT OK /dev/ttyUSB2 | 
+[2026-02-10 11:35:38] KEEPALIVE OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if02-port0 | 
+[2026-02-10 11:35:38] KEEPALIVE OK /dev/ttyUSB1 | 
+[2026-02-10 11:35:39] KEEPALIVE OK /dev/ttyUSB2 | 
+[2026-02-10 11:35:41] AT OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if02-port0 | 
+[2026-02-10 11:36:30] OK +5511980733602 via 1
+[2026-02-10 11:36:54] KEEPALIVE OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if02-port0 | 
+[2026-02-10 11:36:54] KEEPALIVE OK /dev/ttyUSB1 | 
+[2026-02-10 11:36:55] KEEPALIVE OK /dev/ttyUSB2 | 
+[2026-02-10 11:37:55] AT OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if02-port0 | 
+[2026-02-10 11:37:56] AT OK /dev/ttyUSB0 | 
+[2026-02-10 11:37:56] AT OK /dev/ttyUSB1 | 
+[2026-02-10 11:37:56] AT OK /dev/ttyUSB2 | 
+[2026-02-10 11:37:56] AT OK /dev/ttyUSB4 | 
+[2026-02-10 11:37:56] AT OK /dev/ttyUSB5 | 
+[2026-02-10 11:37:57] KEEPALIVE OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if02-port0 | 
+[2026-02-10 11:37:57] KEEPALIVE OK /dev/ttyUSB0 | 
+[2026-02-10 11:37:57] KEEPALIVE OK /dev/ttyUSB1 | 
+[2026-02-10 11:37:57] KEEPALIVE OK /dev/ttyUSB2 | 
+[2026-02-10 11:37:57] KEEPALIVE OK /dev/ttyUSB4 | 
+[2026-02-10 11:37:58] KEEPALIVE OK /dev/ttyUSB5 | 
+[2026-02-10 11:38:57] KEEPALIVE OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if02-port0 | 
+[2026-02-10 11:38:57] KEEPALIVE OK /dev/ttyUSB0 | 
+[2026-02-10 11:38:57] KEEPALIVE OK /dev/ttyUSB1 | 
+[2026-02-10 11:38:57] KEEPALIVE OK /dev/ttyUSB2 | 
+[2026-02-10 11:38:58] KEEPALIVE OK /dev/ttyUSB4 | 
+[2026-02-10 11:38:58] KEEPALIVE OK /dev/ttyUSB5 | 
+[2026-02-10 11:39:58] KEEPALIVE OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if02-port0 | 
+[2026-02-10 11:39:58] KEEPALIVE OK /dev/ttyUSB0 | 
+[2026-02-10 11:39:58] KEEPALIVE OK /dev/ttyUSB1 | 
+[2026-02-10 11:39:58] KEEPALIVE OK /dev/ttyUSB2 | 
+[2026-02-10 11:39:59] KEEPALIVE OK /dev/ttyUSB4 | 
+[2026-02-10 11:39:59] KEEPALIVE OK /dev/ttyUSB5 | 
+[2026-02-10 11:40:59] KEEPALIVE OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if02-port0 | 
+[2026-02-10 11:40:59] KEEPALIVE OK /dev/ttyUSB0 | 
+[2026-02-10 11:40:59] KEEPALIVE OK /dev/ttyUSB1 | 
+[2026-02-10 11:40:59] KEEPALIVE OK /dev/ttyUSB2 | 
+[2026-02-10 11:40:59] KEEPALIVE OK /dev/ttyUSB4 | 
+[2026-02-10 11:41:00] KEEPALIVE OK /dev/ttyUSB5 | 
+[2026-02-10 11:41:59] KEEPALIVE OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if02-port0 | 
+[2026-02-10 11:42:00] KEEPALIVE OK /dev/ttyUSB0 | 
+[2026-02-10 11:42:00] KEEPALIVE OK /dev/ttyUSB1 | 
+[2026-02-10 11:42:00] KEEPALIVE OK /dev/ttyUSB2 | 
+[2026-02-10 11:42:00] KEEPALIVE OK /dev/ttyUSB4 | 
+[2026-02-10 11:42:00] KEEPALIVE OK /dev/ttyUSB5 | 
+[2026-02-10 11:43:21] AT OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if02-port0 | 
+[2026-02-10 11:43:21] AT OK /dev/ttyUSB0 | 
+[2026-02-10 11:43:22] AT OK /dev/ttyUSB1 | 
+[2026-02-10 11:43:22] AT OK /dev/ttyUSB2 | 
+[2026-02-10 11:43:22] AT OK /dev/ttyUSB4 | 
+[2026-02-10 11:43:22] AT OK /dev/ttyUSB5 | 
+[2026-02-10 11:43:22] KEEPALIVE OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if02-port0 | 
+[2026-02-10 11:43:23] KEEPALIVE OK /dev/ttyUSB0 | 
+[2026-02-10 11:43:23] KEEPALIVE OK /dev/ttyUSB1 | 
+[2026-02-10 11:43:23] KEEPALIVE OK /dev/ttyUSB2 | 
+[2026-02-10 11:43:23] KEEPALIVE OK /dev/ttyUSB4 | 
+[2026-02-10 11:43:23] KEEPALIVE OK /dev/ttyUSB5 | 
+[2026-02-10 11:50:32] AT OK /dev/serial/by-id/usb-ZTE_Incorporated_ZTE_Mobile_Broadband_Station_1234567890ABCDEF-if02-port0 | 
+[2026-02-10 11:50:33] AT OK /dev/ttyUSB0 | 
+[2026-02-10 11:50:33] AT OK /dev/ttyUSB1 | 
+[2026-02-10 11:50:33] AT OK /dev/ttyUSB2 | 
+[2026-02-10 11:50:33] AT OK /dev/ttyUSB4 | 
+[2026-02-10 11:50:33] AT OK /dev/ttyUSB5 | 
+[2026-02-10 11:52:44] AT OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.1:1.2-port0 | 
+[2026-02-10 11:52:44] AT OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.2:1.2-port0 | 
+[2026-02-10 11:53:06] AT OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.1:1.2-port0 | 
+[2026-02-10 11:53:06] AT OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.2:1.2-port0 | 
+[2026-02-10 11:53:06] KEEPALIVE OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.1:1.2-port0 | 
+[2026-02-10 11:53:06] KEEPALIVE OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.2:1.2-port0 | 
+[2026-02-10 11:54:36] AT OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.1:1.2-port0 | 
+[2026-02-10 11:54:36] AT OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.2:1.2-port0 | 
+[2026-02-10 11:54:36] KEEPALIVE OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.1:1.2-port0 | 
+[2026-02-10 11:54:36] KEEPALIVE OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.2:1.2-port0 | 
+[2026-02-10 11:55:13] OK +5511980733602 via 1
+[2026-02-10 11:55:39] KEEPALIVE OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.1:1.2-port0 | 
+[2026-02-10 11:55:39] KEEPALIVE OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.2:1.2-port0 | 
+[2026-02-10 11:56:13] OK +5511980733602 via 1
+[2026-02-10 11:56:43] OK +5511980733602 via 1
+[2026-02-10 11:56:52] OK +5511983594996 via 2
+[2026-02-10 11:57:01] OK +5511984976965 via 1
+[2026-02-10 11:57:09] OK +5511916910227 via 2
+[2026-02-10 12:08:23] KEEPALIVE OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.1:1.2-port0 | 
+[2026-02-10 12:10:17] AT OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.2:1.2-port0 | 
+[2026-02-10 12:10:17] KEEPALIVE OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.1:1.2-port0 | 
+[2026-02-10 12:10:17] KEEPALIVE OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.2:1.2-port0 | 
+[2026-02-10 12:20:20] AT OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.1:1.2-port0 | 
+[2026-02-10 12:20:20] AT OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.2:1.2-port0 | 
+[2026-02-10 12:20:20] KEEPALIVE OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.1:1.2-port0 | 
+[2026-02-10 12:20:20] KEEPALIVE OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.2:1.2-port0 | 
+[2026-02-10 12:21:33] KEEPALIVE OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.1:1.2-port0 | 
+[2026-02-10 12:21:33] KEEPALIVE OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.2:1.2-port0 | 
+[2026-02-10 12:22:48] AT OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.1:1.2-port0 | 
+[2026-02-10 12:22:48] AT OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.2:1.2-port0 | 
+[2026-02-10 12:22:48] KEEPALIVE OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.1:1.2-port0 | 
+[2026-02-10 12:22:49] KEEPALIVE OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.2:1.2-port0 | 
+[2026-02-10 12:25:20] AT OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.1:1.2-port0 | 
+[2026-02-10 12:25:20] AT OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.2:1.2-port0 | 
+[2026-02-10 12:25:20] KEEPALIVE OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.1:1.2-port0 | 
+[2026-02-10 12:25:20] KEEPALIVE OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.2:1.2-port0 | 
+[2026-02-10 12:26:32] KEEPALIVE OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.1:1.2-port0 | 
+[2026-02-10 12:26:33] KEEPALIVE OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.2:1.2-port0 | 
+[2026-02-10 12:29:09] AT OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.1:1.2-port0 | 
+[2026-02-10 12:29:09] AT OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.2:1.2-port0 | 
+[2026-02-10 12:29:09] KEEPALIVE OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.1:1.2-port0 | 
+[2026-02-10 12:29:09] KEEPALIVE OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.2:1.2-port0 | 
+[2026-02-10 12:29:55] AT OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.2:1.2-port0 | 
+[2026-02-10 12:30:09] KEEPALIVE OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.1:1.2-port0 | 
+[2026-02-10 12:30:09] KEEPALIVE OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.2:1.2-port0 | 
+[2026-02-10 12:30:49] AT OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.2:1.2-port0 | 
+[2026-02-10 12:31:10] KEEPALIVE OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.1:1.2-port0 | 
+[2026-02-10 12:31:10] KEEPALIVE OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.2:1.2-port0 | 
+[2026-02-10 12:32:57] OK +5511980733602 via 1
+[2026-02-10 12:43:39] AT OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.1:1.2-port0 | 
+[2026-02-10 12:43:39] AT OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.2:1.2-port0 | 
+[2026-02-10 12:43:39] KEEPALIVE OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.1:1.2-port0 | 
+[2026-02-10 12:43:39] KEEPALIVE OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.2:1.2-port0 | 
+[2026-02-10 12:48:18] AT OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.1:1.2-port0 | 
+[2026-02-10 12:48:18] AT OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.2:1.2-port0 | 
+[2026-02-10 12:48:18] KEEPALIVE OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.1:1.2-port0 | 
+[2026-02-10 12:48:18] KEEPALIVE OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.2:1.2-port0 | 
+[2026-02-10 12:48:24] AT OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.1:1.2-port0 | 
+[2026-02-10 12:48:24] AT OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.2:1.2-port0 | 
+[2026-02-10 12:49:03] OK +5511980733602 via 1
+[2026-02-10 12:49:56] KEEPALIVE OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.1:1.2-port0 | 
+[2026-02-10 12:49:56] KEEPALIVE OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.2:1.2-port0 | 
+[2026-02-10 12:50:26] FAIL +551 via 1 | Se deseja interromper, pressione CTRL+C…
+[2026-02-10 12:50:38] FAIL +551 via 2 | Erro ao gravar no dispositivo.
+[2026-02-10 12:51:54] AT OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.1:1.2-port0 | 
+[2026-02-10 12:51:54] AT OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.2:1.2-port0 | 
+[2026-02-10 12:51:54] KEEPALIVE OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.1:1.2-port0 | 
+[2026-02-10 12:51:54] KEEPALIVE OK /dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.2:1.2-port0 | 
+[2026-02-10 12:52:33] FAIL +551 via 1 | Se deseja interromper, pressione CTRL+C…
+[2026-02-10 12:52:46] OK +5516974049515 via 1
+[2026-02-10 12:53:00] OK +5512992200221 via 1
+[2026-02-10 12:53:05] FAIL +5516993985250 via 1 | Erro abrindo dispositivo, não existe.
+[2026-02-10 12:53:10] FAIL +5519996692336 via 1 | Erro abrindo dispositivo, não existe.
+[2026-02-10 12:53:36] OK +5511983283779 via 1
+[2026-02-10 12:53:49] OK +5516993848016 via 1
+[2026-02-10 12:54:03] OK +5511943165283 via 1
+[2026-02-10 12:54:17] OK +5511984219205 via 1
+[2026-02-10 12:54:30] OK +5518981613638 via 1
+[2026-02-10 12:54:45] OK +5517996066661 via 1
+[2026-02-10 12:54:59] OK +5513996270134 via 1
+[2026-02-10 12:55:12] OK +5513974180164 via 1
+[2026-02-10 12:55:26] OK +5511993526829 via 1
+[2026-02-10 12:55:40] OK +5514998159551 via 1

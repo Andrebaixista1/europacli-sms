@@ -1,13 +1,22 @@
 {
   "country_prefix": "55",
-  "flash": false,
-  "connection": "at115200",
+  "flash": true,
+  "connection": "at",
   "selected_devices": [
-    "/dev/ttyUSB1",
-    "/dev/ttyUSB2",
-    "/dev/ttyUSB3"
+    "/dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.1:1.2-port0",
+    "/dev/serial/by-path/pci-0000:00:14.0-usb-0:3.1.2:1.2-port0"
   ],
   "send_delay_sec": 1.0,
+  "random_delay_enabled": true,
+  "random_delay_min_sec": 5.0,
+  "random_delay_max_sec": 5.0,
   "validate_modems": false,
-  "last_csv_path": ""
+  "read_numbers": true,
+  "last_csv_path": "/home/andrefelipe/Downloads/1339732-19930 - CLT - base clt 1 andre-97.csv",
+  "init_at_commands": "AT+ZCDRUN=8",
+  "init_at_baud": 115200,
+  "auto_activate_on_start": true,
+  "keepalive_enabled": true,
+  "keepalive_interval_sec": 60,
+  "keepalive_commands": "AT"
 }
