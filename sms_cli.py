@@ -1751,17 +1751,65 @@ def send_flow(stdscr, cfg, devices, recipients, message, flash):
         )
         return
 
+    today = datetime.now().date()
+    sent_today = set()
+    for rec in load_history():
+        ts = parse_ts(rec.get("ts"))
+        if not ts:
+            continue
+        if ts.date() == today:
+            num = rec.get("number", "")
+            if num:
+                sent_today.add(num)
+
+    duplicates_today = []
+    to_send = []
+    for rec in recipients:
+        num = rec.get("number", "")
+        if num in sent_today:
+            duplicates_today.append(rec)
+        else:
+            to_send.append(rec)
+
     write_gammu_config(selected, cfg.get("connection", "at"))
     sections = [str(i + 1) for i in range(len(selected))]
 
     lines = [
         f"Modems selecionados: {len(selected)}",
-        f"Numeros unicos: {len(recipients)}",
+        f"Numeros unicos: {len(to_send)}",
+        f"Duplicados hoje (ignorados): {len(duplicates_today)}",
         f"Flash: {'sim' if flash else 'nao'}",
         "",
         "Confirma o envio?",
     ]
     if not confirm_screen(stdscr, "Confirmar", lines):
+        return
+
+    dup_records = []
+    for rec in duplicates_today:
+        record = {
+            "ts": datetime.now().isoformat(timespec="seconds"),
+            "name": _normalize_text(rec.get("name", "")),
+            "number": rec.get("number", ""),
+            "message": message,
+            "flash": bool(flash),
+            "status": "DUPLICATE_TODAY",
+            "device": "SKIPPED_DUPLICATE",
+            "section": "-",
+            "response": "Skipped: already sent today",
+        }
+        append_history(record)
+        dup_records.append(record)
+
+    if not to_send:
+        message_screen(
+            stdscr,
+            "Enviar",
+            [
+                "Todos os numeros desta lista ja foram enviados hoje.",
+                f"Duplicados ignorados: {len(duplicates_today)}",
+            ],
+        )
         return
 
     delay = float(cfg.get("send_delay_sec", 0))
@@ -1773,14 +1821,14 @@ def send_flow(stdscr, cfg, devices, recipients, message, flash):
     else:
         delay_info = f"{delay}s"
     attempt = 1
-    pending = recipients
+    pending = to_send
     total_ok = 0
     status_list = ["PENDENTE" for _ in pending]
     recipient_modems = ["-" for _ in pending]
     modem_order = list(selected)
     modem_labels = build_modem_labels(modem_order)
     modem_status = {dev: "-" for dev in modem_order}
-    report_records = []
+    report_records = list(dup_records)
     while True:
         def progress_cb(
             sent,
