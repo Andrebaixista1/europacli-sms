@@ -15,6 +15,8 @@ from datetime import datetime
 from datetime import timedelta
 from glob import glob
 import csv
+import shutil
+import unicodedata
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CONFIG_PATH = os.path.join(BASE_DIR, "config.json")
@@ -187,21 +189,62 @@ def run_at_commands(dev, commands, baud=115200, timeout=1.0):
         return False, str(e)
 
 def device_real(dev):
+    if IS_WINDOWS:
+        # COM ports não precisam de canonicalização; manter simples evita caminhos estranhos
+        return str(dev).upper()
     try:
         return os.path.realpath(dev)
     except Exception:
         return dev
+
+
+def resolve_selected_devices(devices, selected_cfg):
+    real_map = {device_real(d): d for d in devices}
+    selected = []
+    for cfg_dev in selected_cfg:
+        real = device_real(cfg_dev)
+        if real in real_map:
+            selected.append(real_map[real])
+    return selected
 
 def list_windows_ports():
     try:
         from serial.tools import list_ports
     except Exception:
         return []
-    ports = []
+    def _com_number(dev):
+        m = re.search(r"COM(\\d+)", str(dev).upper())
+        return int(m.group(1)) if m else 10_000
+
+    def _pref_score(desc):
+        d = (desc or "").lower()
+        if "at interface" in d or "pc ui" in d:
+            return 0
+        if "modem" in d:
+            return 1
+        if "diag" in d:
+            return 3
+        return 2
+
+    ports_by_key = {}
     for p in list_ports.comports():
-        if p.device:
-            ports.append(p.device)
-    return sorted(ports)
+        if not p.device:
+            continue
+        loc = getattr(p, "location", None) or ""
+        loc_base = loc.rsplit(".", 1)[0] if "." in loc else loc
+        key = (
+            getattr(p, "serial_number", None)
+            or loc_base
+            or f"{getattr(p, 'vid', None)}:{getattr(p, 'pid', None)}"
+        )
+        score = _pref_score(getattr(p, "description", ""))
+        existing = ports_by_key.get(key)
+        if existing is None or score < existing[0] or (
+            score == existing[0] and _com_number(p.device) < _com_number(existing[1])
+        ):
+            ports_by_key[key] = (score, p.device)
+    ports = [dev for _, dev in sorted(ports_by_key.values(), key=lambda t: _com_number(t[1]))]
+    return ports
 
 
 def _iface_rank(dev):
@@ -365,9 +408,12 @@ def append_history(record):
 
 
 def is_valid_modem(dev, connection):
+    gbin = gammu_bin()
+    if not gbin:
+        return False
     try:
         cfg, section = write_temp_gammu_config(dev, connection)
-        cmd = ["gammu", "-c", cfg, "-s", section, "identify"]
+        cmd = [gbin, "-c", cfg, "-s", section, "identify"]
         proc = subprocess.run(cmd, capture_output=True, text=True, timeout=3)
         return proc.returncode == 0
     except Exception:
@@ -375,9 +421,12 @@ def is_valid_modem(dev, connection):
 
 
 def get_own_number(dev, connection):
+    gbin = gammu_bin()
+    if not gbin:
+        return None
     try:
         cfg, section = write_temp_gammu_config(dev, connection)
-        cmd = ["gammu", "-c", cfg, "-s", section, "getmemory", "ON", "1", "20", "-nonempty"]
+        cmd = [gbin, "-c", cfg, "-s", section, "getmemory", "ON", "1", "20", "-nonempty"]
         proc = subprocess.run(cmd, capture_output=True, text=True, timeout=3)
         if proc.returncode != 0:
             return None
@@ -448,42 +497,82 @@ def parse_numbers(text, prefix):
     return numbers
 
 
+def _normalize_text(value):
+    if value is None:
+        return ""
+    return unicodedata.normalize("NFC", str(value))
+
+
+_GAMMU_BIN = None
+
+
+def gammu_bin():
+    """Resolve o caminho do executavel do Gammu (cacheado)."""
+    global _GAMMU_BIN
+    if _GAMMU_BIN is not None:
+        return _GAMMU_BIN or None
+    candidates = [shutil.which("gammu")]
+    if IS_WINDOWS:
+        pf = os.environ.get("ProgramFiles", r"C:\\Program Files")
+        pfx86 = os.environ.get("ProgramFiles(x86)", r"C:\\Program Files (x86)")
+        patterns = [
+            os.path.join(pf, "Gammu*", "bin", "gammu.exe"),
+            os.path.join(pfx86, "Gammu*", "bin", "gammu.exe"),
+        ]
+        for pattern in patterns:
+            candidates.extend(glob(pattern))
+    for path in candidates:
+        if path and os.path.exists(path):
+            _GAMMU_BIN = path
+            return path
+    _GAMMU_BIN = ""
+    return None
+
+
 def parse_csv_numbers(path, prefix):
-    numbers = []
-    seen = set()
-    try:
-        with open(path, "r", encoding="utf-8") as f:
-            sample = f.read(4096)
-            f.seek(0)
-            try:
-                dialect = csv.Sniffer().sniff(sample, delimiters=";,")
-            except Exception:
-                dialect = csv.excel
-            reader = csv.reader(f, dialect=dialect)
-            for row in reader:
-                if not row:
-                    continue
-                num = row[0] if len(row) > 0 else ""
-                name = row[1] if len(row) > 1 else ""
-                if not num:
-                    continue
-                formatted = format_number(str(num), prefix)
-                if formatted and formatted not in seen:
-                    seen.add(formatted)
-                    numbers.append(
-                        {
-                            "number": formatted,
-                            "name": str(name).strip() if name is not None else "",
-                        }
-                    )
-    except Exception:
-        return []
-    return numbers
+    encodings = ["utf-8-sig", "latin1", "cp1252", "utf-16", "utf-16le", "utf-16be"]
+    delimiters = ";,"
+    for enc in encodings:
+        numbers = []
+        seen = set()
+        try:
+            with open(path, "r", encoding=enc) as f:
+                sample = f.read(4096)
+                f.seek(0)
+                try:
+                    dialect = csv.Sniffer().sniff(sample, delimiters=delimiters)
+                except Exception:
+                    dialect = csv.excel
+                reader = csv.reader(f, dialect=dialect)
+                for row in reader:
+                    if not row:
+                        continue
+                    num = row[0] if len(row) > 0 else ""
+                    name = _normalize_text(row[1] if len(row) > 1 else "")
+                    if not num:
+                        continue
+                    formatted = format_number(str(num), prefix)
+                    if formatted and formatted not in seen:
+                        seen.add(formatted)
+                        numbers.append(
+                            {
+                                "number": formatted,
+                                "name": str(name).strip() if name is not None else "",
+                            }
+                        )
+            if numbers:
+                return numbers
+        except Exception:
+            continue
+    return []
 
 
 def send_sms(section, number, message, flash):
+    gbin = gammu_bin()
+    if not gbin:
+        return False, "", "Gammu nao encontrado. Instale e deixe 'gammu' no PATH (ex.: winget install Gammu.Gammu)."
     cmd = [
-        "gammu",
+        gbin,
         "-c",
         GAMMU_RC_PATH,
         "-s",
@@ -525,7 +614,7 @@ def send_numbers(
     total_modems = len(sections)
     for i, rec in enumerate(recipients):
         num = rec.get("number", "")
-        name = rec.get("name", "")
+        name = _normalize_text(rec.get("name", ""))
         if status_list is not None:
             status_list[i] = "ENVIANDO"
         ok = False
@@ -859,27 +948,68 @@ def prompt_input(stdscr, title, prompt, initial="", replace_on_type=False):
         stdscr.clrtoeol()
         stdscr.addstr(h - 2, 2, "Enter: ok  ESC: cancelar  Ctrl+U: limpar")
         stdscr.refresh()
-        key = stdscr.getch()
-        if key in (10, 13, curses.KEY_ENTER):
-            return current.strip()
-        if key == 27:
+        try:
+            key = stdscr.get_wch()
+        except Exception:
+            key = stdscr.getch()
+        if key in (10, 13, curses.KEY_ENTER, "\n", "\r"):
+            return _normalize_text(current.strip())
+        if key in (27, "\x1b", curses.KEY_EXIT):
             return ""
-        if key == 21:
+        if key in (21, "\x15"):
             current = ""
             touched = True
             continue
-        if key in (curses.KEY_BACKSPACE, 127, 8):
+        if key in (
+            curses.KEY_BACKSPACE,
+            curses.KEY_DC,
+            127,
+            8,
+            "\x7f",
+            "\b",
+        ):
             current = current[:-1]
             touched = True
             continue
-        if 32 <= key <= 126:
+        if isinstance(key, str) and key:
             if replace_on_type and not touched and initial:
                 current = ""
-            current += chr(key)
-            touched = True
+            # aceita qualquer caractere imprimivel (exceto DEL)
+            if ord(key) >= 32 and key != "\x7f":
+                current += key
+                touched = True
 
 
 def choose_file_dialog():
+    if IS_WINDOWS:
+        path = None
+        try:
+            try:
+                curses.def_prog_mode()
+                curses.endwin()
+            except Exception:
+                pass
+            try:
+                import tkinter as tk  # type: ignore
+                from tkinter import filedialog  # type: ignore
+                root = tk.Tk()
+                root.withdraw()
+                path = filedialog.askopenfilename(
+                    title="Selecione o CSV",
+                    filetypes=[("Arquivos CSV", "*.csv"), ("Todos os arquivos", "*.*")],
+                )
+                root.destroy()
+            except Exception:
+                path = None
+        finally:
+            try:
+                curses.reset_prog_mode()
+                curses.curs_set(0)
+                curses.doupdate()
+            except Exception:
+                pass
+        if path:
+            return path
     for cmd in (
         ["zenity", "--file-selection", "--title=Selecione o CSV"],
         ["kdialog", "--getopenfilename", ".", "*.csv"],
@@ -936,7 +1066,7 @@ def multiline_input(stdscr, title, hint):
         stdscr.addstr(h - 2, 2, "F2: ok  ESC: cancelar  Enter: nova linha  Ctrl+V: colar")
         stdscr.refresh()
         key = stdscr.get_wch()
-        if key == 27:
+        if key in (27, "\x1b", curses.KEY_EXIT):
             return None
         if key == curses.KEY_F2:
             if current:
@@ -946,7 +1076,14 @@ def multiline_input(stdscr, title, hint):
             lines.append(current)
             current = ""
             continue
-        if key in (curses.KEY_BACKSPACE, 127, 8):
+        if key in (
+            curses.KEY_BACKSPACE,
+            curses.KEY_DC,
+            127,
+            8,
+            "\x7f",
+            "\b",
+        ):
             current = current[:-1]
             continue
         if key in (21, "\x15"):
@@ -1156,8 +1293,7 @@ def release_ports_screen(stdscr, cfg, devices):
         message_screen(stdscr, "Liberar portas", ["Disponivel apenas no Linux."])
         return
     selected_cfg = cfg.get("selected_devices", [])
-    selected_real = {device_real(d) for d in selected_cfg}
-    selected = [d for d in devices if device_real(d) in selected_real]
+    selected = resolve_selected_devices(devices, selected_cfg)
     if not selected:
         message_screen(stdscr, "Liberar portas", ["Nenhum modem selecionado."])
         return
@@ -1417,8 +1553,7 @@ def activate_modems_screen(stdscr, cfg, devices):
         )
         return
     selected_cfg = cfg.get("selected_devices", [])
-    selected_real = {device_real(d) for d in selected_cfg}
-    selected = [d for d in devices if device_real(d) in selected_real]
+    selected = resolve_selected_devices(devices, selected_cfg)
     if not selected:
         message_screen(stdscr, "Ativar modems", ["Nenhum modem selecionado."])
         return
@@ -1496,8 +1631,7 @@ def build_modem_labels(devices):
 
 def compose_and_send(stdscr, cfg, devices):
     selected_cfg = cfg.get("selected_devices", [])
-    selected_real = {device_real(d) for d in selected_cfg}
-    selected = [d for d in devices if device_real(d) in selected_real]
+    selected = resolve_selected_devices(devices, selected_cfg)
     if not selected:
         message_screen(stdscr, "Enviar", ["Nenhum modem selecionado."])
         return
@@ -1529,6 +1663,9 @@ def compose_and_send(stdscr, cfg, devices):
         if not path:
             return
         recipients = parse_csv_numbers(path, cfg.get("country_prefix", ""))
+        if not recipients:
+            message_screen(stdscr, "CSV", ["Nenhum numero valido encontrado no arquivo."])
+            return
         if recipients:
             cfg["last_csv_path"] = path
             save_config(cfg)
@@ -1545,13 +1682,32 @@ def compose_and_send(stdscr, cfg, devices):
 
 def send_flow(stdscr, cfg, devices, recipients, message, flash):
     selected_cfg = cfg.get("selected_devices", [])
-    selected_real = {device_real(d) for d in selected_cfg}
-    selected = [d for d in devices if device_real(d) in selected_real]
+    selected = resolve_selected_devices(devices, selected_cfg)
     if not selected:
         message_screen(stdscr, "Enviar", ["Nenhum modem selecionado."])
         return
     if not recipients:
         message_screen(stdscr, "Enviar", ["Nenhum numero valido informado."])
+        return
+
+    message = _normalize_text(message)
+
+    # Garantir AT antes de cada envio, se houver comandos configurados.
+    commands = parse_at_commands(cfg.get("init_at_commands", ""))
+    if commands:
+        activate_modems(selected, commands, cfg.get("init_at_baud", 115200))
+
+    gbin = gammu_bin()
+    if not gbin:
+        message_screen(
+            stdscr,
+            "Gammu",
+            [
+                "Gammu nao encontrado.",
+                "Instale e deixe 'gammu' no PATH.",
+                "Sugestao: winget install Gammu.Gammu",
+            ],
+        )
         return
 
     write_gammu_config(selected, cfg.get("connection", "at"))
@@ -1843,8 +1999,8 @@ def main(stdscr):
             break
         if choice == 0:
             selected_cfg = cfg.get("selected_devices", [])
-            selected_real = {device_real(d) for d in selected_cfg}
-            checked = {d for d in devices if device_real(d) in selected_real}
+            selected = resolve_selected_devices(devices, selected_cfg)
+            checked = set(selected)
             while True:
                 def do_rescan():
                     auto_activate_devices(cfg, auto_activated_real)
